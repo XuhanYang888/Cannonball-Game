@@ -10,12 +10,13 @@ function setup() {
     p5play.renderStats = true;
 
     cart = new Sprite();
-    cart.w = 100;
-    cart.h = 50;
+    // cart.w = 100;
+    // cart.h = 50;
     cart.x = 100;
     cart.y = 850;
-    cart.color = "#7F461B";
+    // cart.color = "#7F461B";
     cart.collider = "static";
+    cart.img = "cart.png";
 
     cannon = new Sprite();
     cannon.d = 50;
