@@ -16,6 +16,7 @@ function setup() {
     cart.y = 850;
     cart.collider = "static";
     cart.img = "cart.png";
+    cart.scale = 0.2;
 
     cannon = new Sprite();
     cannon.d = 50;
