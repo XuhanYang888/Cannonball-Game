@@ -10,21 +10,14 @@ function setup() {
     p5play.renderStats = true;
 
     cart = new Sprite();
-    cart.w = 100;
-    cart.h = 50;
-    cart.x = 100;
-    cart.y = 850;
+    cart.w = 500;
+    cart.h = 250;
+    cart.x = 150;
+    cart.y = 825;
     cart.collider = "static";
-    cart.img = "cart.png";
-    cart.scale = 0.2;
-
-    cannon = new Sprite();
-    cannon.d = 50;
-    cannon.x = 100;
-    cannon.y = 800;
-    cannon.color = "white";
-    cannon.rotation = -1;
-    cannon.text = "=====[]";
+    cart.img = "imgs/cart.png";
+    cart.scale = 0.4;
+    cart.debug = true;
 
     projectile = new Group();
     projectile.d = 20;
@@ -33,8 +26,16 @@ function setup() {
     projectile.mass = 1.5;
     projectile.text = "->";
     projectile.textColor = "white";
-    cannonball = new projectile.Sprite(135, 800);
-    new GlueJoint(cannon, cannonball);
+
+    cannon = new Sprite();
+    cannon.d = 600;
+    cannon.x = 150;
+    cannon.y = 750;
+    cannon.collider = "none";
+    cannon.rotation = -1;
+    cannon.debug = true;
+    cannon.img = "imgs/cannon.png";
+    cannon.scale = 0.3;
 
     target = new Group();
     target.d = 50;
@@ -94,9 +95,6 @@ function draw() {
 
     cart.text = String(counter) + " " + String(score);
 
-    //cannon movement
-    cannon.x = cart.x;
-    cannon.y = cart.y - 50;
     if (kb.pressing("down")) {
         cannon.rotationSpeed = 3;
     } else if (kb.pressing("up")) {
@@ -116,23 +114,29 @@ function draw() {
     }
 
     // shoot and reload cannonball
+    if (cannonballInAir) {
+        var cannonballAngle = Math.atan(cannonball.vel.y / cannonball.vel.x) * 180 / Math.PI;
+        if (cannonballAngle == cannonballAngle) {
+            cannonball.rotation = cannonballAngle;
+        }
+        if (cannonball.collided(allSprites)) {
+            cannonballInAir = false;
+        }
+        //break plank
+        cannonball.collides(plank, breakPlank);
+        //hit target
+        cannonball.collides(target, addScore);
 
-    var cannonballAngle = Math.atan(cannonball.vel.y / cannonball.vel.x) * 180 / Math.PI;
-    if (cannonballInAir && cannonballAngle == cannonballAngle) {
-        cannonball.rotation = cannonballAngle;
-    }
-    if (cannonball.collides(allSprites)) {
-        cannonballInAir = false;
-        cannonball = new projectile.Sprite(135, 800);
-        var lastRotation = cannon.rotation;
-        cannon.rotation = 1;
-        new GlueJoint(cannon, cannonball);
-        cannon.rotation = lastRotation;
+        if (round(dist(cannonball.x, cannonball.y, 150, 750)) >= 80) {
+            cannonball.visible = true;
+        }
+        
     }
     if (!cannonballInAir) {
         if (kb.pressed(" ")) {
             counter++;
-            cannon.joints[0].remove();
+            cannonball = new projectile.Sprite(150, 750);
+            cannonball.visible = false;
             var angle = -cannon.rotation;
             var ratio = 1 / Math.tan(angle * Math.PI / 180);
             var yForce = (25 - (Math.log(angle) / Math.log(1.6))) / (1 + ratio);
@@ -142,10 +146,6 @@ function draw() {
             cannonballInAir = true;
         }
     }
-    //break plank
-    cannonball.collides(plank, breakPlank);
-    //hit target
-    cannonball.collides(target, addScore);
 }
 
 function breakPlank(cannonball, plank) {
