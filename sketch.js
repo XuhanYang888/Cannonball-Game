@@ -20,12 +20,15 @@ function setup() {
     cart.debug = true;
 
     projectile = new Group();
-    projectile.d = 20;
+    projectile.d = 200;
     projectile.color = "black";
     projectile.friction = 5;
     projectile.mass = 1.5;
-    projectile.text = "->";
-    projectile.textColor = "white";
+    projectile.addAni("fireball", "imgs/fireball/fireball-1.png", 4);
+    projectile.addAni("ball", "imgs/ball/ball1.png", 2);
+    projectile.scale = 0.15;
+    projectile.debug = true;
+
 
     cannon = new Sprite();
     cannon.d = 600;
@@ -90,8 +93,8 @@ function setup() {
 }
 
 function draw() {
-    clear();
-    background('#cfebfd');
+    //clear();
+    background(207, 235, 253, 120);
 
     cart.text = String(counter) + " " + String(score);
 
@@ -119,7 +122,7 @@ function draw() {
         if (cannonballAngle == cannonballAngle) {
             cannonball.rotation = cannonballAngle;
         }
-        if (cannonball.collided(allSprites)) {
+        if (cannonball.collides(allSprites)) {
             cannonballInAir = false;
         }
         //break plank
@@ -130,9 +133,15 @@ function draw() {
         if (round(dist(cannonball.x, cannonball.y, 150, 750)) >= 80) {
             cannonball.visible = true;
         }
-        
-    }
-    if (!cannonballInAir) {
+        cannonball.changeAni("fireball");
+        cannonball.d = 30;
+        cannonball.scale = 0.15;
+    } else if (!cannonballInAir) {
+        if (cannonball){
+            cannonball.changeAni("ball");
+            cannonball.d = 30;
+            cannonball.scale = 0.1;
+        }
         if (kb.pressed(" ")) {
             counter++;
             cannonball = new projectile.Sprite(150, 750);
@@ -150,9 +159,11 @@ function draw() {
 
 function breakPlank(cannonball, plank) {
     plank.remove();
+    cannonballInAir = false;
 }
 
 function addScore(cannonball, target) {
+    cannonballInAir = false;
     target.text = target.color;
     if (target.color == "rgba(255,0,0,1)") {
         score++;
