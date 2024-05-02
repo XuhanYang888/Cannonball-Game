@@ -2,7 +2,8 @@ let ground, cart, cannon, cannonball, projectile;
 let plank, concrete, target, normalTarget, goldTarget;
 var counter = 0;
 var score = 0;
-var cannonballInAir = false;
+var lastShot = 0;
+var fly = false;
 
 function setup() {
     new Canvas(1600, 900);
@@ -20,15 +21,12 @@ function setup() {
     cart.debug = true;
 
     projectile = new Group();
-    projectile.d = 200;
-    projectile.color = "black";
-    projectile.friction = 5;
-    projectile.mass = 1.5;
-    projectile.addAni("fireball", "imgs/fireball/fireball-1.png", 4);
-    projectile.addAni("ball", "imgs/ball/ball1.png", 2);
-    projectile.scale = 0.15;
+    projectile.d = 40;
+    projectile.friction = 1;
+    projectile.mass = 2;
+    projectile.addAni("fireball", "imgs/fireball/fireball1.png", 4);
+    projectile.addAni("ball", "imgs/ball.png");
     projectile.debug = true;
-
 
     cannon = new Sprite();
     cannon.d = 600;
@@ -42,6 +40,7 @@ function setup() {
 
     target = new Group();
     target.d = 50;
+    target.name = "target";
 
     normalTarget = new target.Group();
     normalTarget.color = "red";
@@ -54,11 +53,12 @@ function setup() {
     goldTarget.textColor = "black";
 
     plank = new Group();
-    plank.friction = 2.5;
+    plank.mass = 5;
+    plank.name = "plank";
     plank.color = "#7F461B";
 
     concrete = new Group();
-    concrete.friction = 2;
+    concrete.mass = 50;
     concrete.color = "#606060";
 
     ground = new Sprite();
@@ -67,7 +67,6 @@ function setup() {
     ground.h = 50;
     ground.y = 900;
     ground.color = "darkgreen";
-
 
 
     //build scene
@@ -116,59 +115,52 @@ function draw() {
         cannon.rotation += 2;
     }
 
-    // shoot and reload cannonball
-    if (cannonballInAir) {
-        var cannonballAngle = Math.atan(cannonball.vel.y / cannonball.vel.x) * 180 / Math.PI;
-        if (cannonballAngle == cannonballAngle) {
-            cannonball.rotation = cannonballAngle;
-        }
-        if (cannonball.collides(allSprites)) {
-            cannonballInAir = false;
-        }
-        //break plank
-        cannonball.collides(plank, breakPlank);
-        //hit target
-        cannonball.collides(target, addScore);
-
+    lastShot--;
+    if (kb.pressed(" ") && lastShot < 1 && counter < 10 && !fly) {
+        fly = true;
+        lastShot = 30;
+        counter++;
+        cannonball = new projectile.Sprite(150, 750);
+        cannonball.changeAni("fireball");
+        cannonball.visible = false;
+        var angle = -cannon.rotation;
+        var totalForce = 25 - (Math.log(angle) / Math.log(1.6));
+        var ratio = 1 / Math.tan(angle * Math.PI / 180);
+        var yForce = totalForce / (1 + ratio);
+        var xForce = totalForce - yForce;
+        cannonball.vel.y = -yForce;
+        cannonball.vel.x = xForce;
+    }
+    if (cannonball) {
         if (round(dist(cannonball.x, cannonball.y, 150, 750)) >= 80) {
             cannonball.visible = true;
         }
-        cannonball.changeAni("fireball");
-        cannonball.d = 30;
-        cannonball.scale = 0.15;
-    } else if (!cannonballInAir) {
-        if (cannonball){
+        if (cannonball.collides(allSprites, cannonballHit)) {
+            fly = false;
+        }
+        if (cannonball.collides(projectile)) {
             cannonball.changeAni("ball");
-            cannonball.d = 30;
-            cannonball.scale = 0.1;
         }
-        if (kb.pressed(" ")) {
-            counter++;
-            cannonball = new projectile.Sprite(150, 750);
-            cannonball.visible = false;
-            var angle = -cannon.rotation;
-            var ratio = 1 / Math.tan(angle * Math.PI / 180);
-            var yForce = (25 - (Math.log(angle) / Math.log(1.6))) / (1 + ratio);
-            var xForce = 25 - (Math.log(angle) / Math.log(1.6)) - yForce;
-            cannonball.vel.y = -yForce;
-            cannonball.vel.x = xForce;
-            cannonballInAir = true;
+        if (fly) {
+            var cannonballAngle = Math.atan(cannonball.vel.y / cannonball.vel.x) * 180 / Math.PI;
+            if (cannonballAngle == cannonballAngle) {
+                cannonball.rotation = cannonballAngle;
+            }
         }
     }
+
 }
 
-function breakPlank(cannonball, plank) {
-    plank.remove();
-    cannonballInAir = false;
-}
-
-function addScore(cannonball, target) {
-    cannonballInAir = false;
-    target.text = target.color;
-    if (target.color == "rgba(255,0,0,1)") {
-        score++;
-    } else {
-        score += 5;
+function cannonballHit(cannonball, obj) {
+    cannonball.changeAni("ball");
+    if (obj.name == "target") {
+        if (obj.color == "rgba(255,0,0,1)") {
+            score++;
+        } else {
+            score += 5;
+        }
+        obj.remove();
+    } else if (obj.name == "plank") {
+        obj.remove();
     }
-    target.remove();
 }
