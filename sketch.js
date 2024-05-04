@@ -97,14 +97,14 @@ function draw() {
 
     cart.text = String(counter) + " " + String(score);
 
+    cannon.text = fly ? "unable to shoot" : "able to shoot";
+
     if (kb.pressing("down")) {
-        cannon.rotationSpeed = 3;
+        cannon.rotationSpeed = 2;
     } else if (kb.pressing("up")) {
-        cannon.rotationSpeed = -3;
-    } else if (kb.released("up") || kb.released("down")) {
-        cannon.rotationSpeed = 0;
+        cannon.rotationSpeed = -2;
     } else {
-        cannon.rotationLock = true;
+        cannon.rotationSpeed = 0;
     }
 
     if (cannon.rotation > -1) {
