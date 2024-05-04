@@ -1,0 +1,31 @@
+:root {
+    --full-black: #000;
+    --full-white: #fff;
+    --text-white: #f0f0f0;
+    --gray: #333;
+    --dark-gray: #121212;
+    --text-gray: #777;
+    --blue: #2997ff;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    background-color: var(--full-white);
+}
+
+body {
+    font-size: 16pt;
+    font-weight: 300;
+    font-family: system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--full-white);
+    color: var(--text-black);
+    margin-bottom: 50px;
+}
+
+main{
+    margin-left: 20px;
+    margin-right: 20px;
+}
