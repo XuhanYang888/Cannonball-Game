@@ -5,8 +5,8 @@ function changeRes() {
     var width = window.screen.availWidth;
     const canvas = document.getElementById("defaultCanvas0");
     canvas.focus();
-    canvas.style.width = String(width - 40) + "px";
-    canvas.style.height = String((width - 40) / 2) + "px";
+    canvas.style.width = String(width - 100) + "px";
+    canvas.style.height = String((width - 100) / 2) + "px";
 }
 
 function Pause() {
