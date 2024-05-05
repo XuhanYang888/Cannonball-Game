@@ -1,6 +1,6 @@
 let ground, cart, cannon, cannonball, projectile;
 let plank, concrete, target, normalTarget, goldTarget;
-let shade, newShade;
+let shade, newShade, cannonIndicator;
 var counter = 0;
 var score = 0;
 var lastShot = 0;
@@ -70,6 +70,16 @@ function setup() {
     ground.y = 900;
     ground.color = "darkgreen";
 
+    //cannon indicator
+    cannonIndicator = new Sprite();
+    cannonIndicator.collider = "none";
+    cannonIndicator.d = 0;
+    cannonIndicator.x = 200;
+    cannonIndicator.y = 900;
+    cannonIndicator.addAni("reloading", "imgs/reloading/reloading1.png", 4);
+    cannonIndicator.addAni("ready", "imgs/ready.png");
+    cannonIndicator.scale = 0.3;
+
     //pause screen
     shade = new Group();
     shade.w = 2000;
@@ -106,8 +116,6 @@ function draw() {
     background(207, 235, 253, 120);
 
     cart.text = String(counter) + " " + String(score);
-
-    cannon.text = fly ? "unable to shoot" : "able to shoot";
 
     if (kb.pressing("down")) {
         cannon.rotationSpeed = 2;
@@ -159,6 +167,11 @@ function draw() {
         }
     }
 
+    if (fly || lastShot > 0) {
+        cannonIndicator.changeAni("reloading");
+    } else {
+        cannonIndicator.changeAni("ready");
+    }
 
     if (gamePause) {
         if (!paused) {
