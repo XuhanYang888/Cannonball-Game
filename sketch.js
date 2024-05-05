@@ -25,7 +25,7 @@ function setup() {
     projectile = new Group();
     projectile.d = 40;
     projectile.friction = 1;
-    projectile.mass = 2;
+    projectile.mass = 3;
     projectile.addAni("fireball", "imgs/fireball/fireball1.png", 4);
     projectile.addAni("ball", "imgs/ball.png");
     projectile.debug = true;
@@ -35,7 +35,7 @@ function setup() {
     cannon.x = 150;
     cannon.y = 750;
     cannon.collider = "none";
-    cannon.rotation = -1;
+    cannon.rotation = -10;
     cannon.debug = true;
     cannon.img = "imgs/cannon.png";
     cannon.scale = 0.3;
@@ -55,12 +55,12 @@ function setup() {
     goldTarget.textColor = "black";
 
     plank = new Group();
-    plank.mass = 5;
+    plank.mass = 10;
     plank.name = "plank";
     plank.color = "#7F461B";
 
     concrete = new Group();
-    concrete.mass = 50;
+    concrete.mass = 30;
     concrete.color = "#606060";
 
     ground = new Sprite();
@@ -117,7 +117,7 @@ function draw() {
         cannon.rotationSpeed = 0;
     }
 
-    if (cannon.rotation > -1) {
+    if (cannon.rotation > -10) {
         cannon.rotationSpeed = 0;
         cannon.rotation -= 2;
     } else if (cannon.rotation < -60) {
@@ -134,10 +134,9 @@ function draw() {
         cannonball.changeAni("fireball");
         cannonball.visible = false;
         var angle = -cannon.rotation;
-        var totalForce = 25 - Math.log(angle) / Math.log(1.6);
-        var ratio = 1 / Math.tan((angle * Math.PI) / 180);
-        var yForce = totalForce / (1 + ratio);
-        var xForce = totalForce - yForce;
+        var totalForce = 15;
+        var yForce = totalForce * Math.sin(angle * Math.PI / 180);
+        var xForce = totalForce * Math.cos(angle * Math.PI / 180);
         cannonball.vel.y = -yForce;
         cannonball.vel.x = xForce;
     }
