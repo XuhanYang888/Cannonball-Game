@@ -75,11 +75,8 @@ function setup() {
     shade.w = 2000;
     shade.h = 1000;
     shade.collider = "none";
-    shade.color = "black";
+    shade.img = "imgs/pause.png";
     shade.opacity = 0.7;
-    shade.text = "Paused \n click to resume";
-    shade.textColor = "white";
-    shade.textSize = 100;
 
     //build scene
     new concrete.Sprite(800, 825, 20, 100);
