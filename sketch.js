@@ -1,11 +1,12 @@
 let ground, cart, cannon, cannonball, projectile;
 let plank, concrete, target, normalTarget, goldTarget;
-let shade, newShade, cannonIndicator;
+let shade, newShade, cannonIndicator, start, startText;
 var counter = 0;
 var score = 0;
 var lastShot = 0;
 var fly = false;
 var paused = false;
+var started = false;
 
 function setup() {
     new Canvas(2000, 1000);
@@ -109,83 +110,111 @@ function setup() {
     new normalTarget.Sprite(1150, 730);
     new goldTarget.Sprite(1000, 610);
 
+    //start screen
+    start = new Sprite();
+    start.w = 2000;
+    start.h = 1000;
+    start.x = 1000;
+    start.y = 500;
+    start.collider = "none";
+    start.color = "black";
+
+    startText = new Sprite();
+    startText.x = 1000;
+    startText.y = 300;
+    startText.collider = "none";
+    startText.addAni("start", "imgs/start/start1.png", 6);
+    startText.scale = 0.3;
 }
 
 function draw() {
     //clear();
     background(207, 235, 253, 120);
 
-    cart.text = String(counter) + " " + String(score);
+    if (started) {
+        start.remove();
+        startText.remove();
 
-    if (kb.pressing("down")) {
-        cannon.rotationSpeed = 2;
-    } else if (kb.pressing("up")) {
-        cannon.rotationSpeed = -2;
-    } else {
-        cannon.rotationSpeed = 0;
-    }
+        cart.text = String(counter) + " " + String(score);
 
-    if (cannon.rotation > -10) {
-        cannon.rotationSpeed = 0;
-        cannon.rotation -= 2;
-    } else if (cannon.rotation < -60) {
-        cannon.rotationSpeed = 0;
-        cannon.rotation += 2;
-    }
+        if (kb.pressing("down")) {
+            cannon.rotationSpeed = 2;
+        } else if (kb.pressing("up")) {
+            cannon.rotationSpeed = -2;
+        } else {
+            cannon.rotationSpeed = 0;
+        }
 
-    lastShot--;
-    if (kb.pressed(" ") && lastShot < 1 && counter < 10 && !fly) {
-        fly = true;
-        lastShot = 30;
-        counter++;
-        cannonball = new projectile.Sprite(150, 750);
-        cannonball.changeAni("fireball");
-        cannonball.visible = false;
-        var angle = -cannon.rotation;
-        var totalForce = 15;
-        var yForce = totalForce * Math.sin(angle * Math.PI / 180);
-        var xForce = totalForce * Math.cos(angle * Math.PI / 180);
-        cannonball.vel.y = -yForce;
-        cannonball.vel.x = xForce;
-    }
-    if (cannonball) {
-        if (round(dist(cannonball.x, cannonball.y, 150, 750)) >= 80) {
-            cannonball.visible = true;
+        if (cannon.rotation > -10) {
+            cannon.rotationSpeed = 0;
+            cannon.rotation -= 2;
+        } else if (cannon.rotation < -60) {
+            cannon.rotationSpeed = 0;
+            cannon.rotation += 2;
         }
-        if (cannonball.collides(allSprites, cannonballHit)) {
-            fly = false;
+
+        lastShot--;
+        if (kb.pressed(" ") && lastShot < 1 && counter < 10 && !fly) {
+            fly = true;
+            lastShot = 30;
+            counter++;
+            cannonball = new projectile.Sprite(150, 750);
+            cannonball.changeAni("fireball");
+            cannonball.visible = false;
+            var angle = -cannon.rotation;
+            var totalForce = 15;
+            var yForce = totalForce * Math.sin(angle * Math.PI / 180);
+            var xForce = totalForce * Math.cos(angle * Math.PI / 180);
+            cannonball.vel.y = -yForce;
+            cannonball.vel.x = xForce;
         }
-        if (cannonball.collides(projectile)) {
-            cannonball.changeAni("ball");
-        }
-        if (fly) {
-            var cannonballAngle =
-                (Math.atan(cannonball.vel.y / cannonball.vel.x) * 180) / Math.PI;
-            if (cannonballAngle == cannonballAngle) {
-                cannonball.rotation = cannonballAngle;
+        if (cannonball) {
+            if (round(dist(cannonball.x, cannonball.y, 150, 750)) >= 80) {
+                cannonball.visible = true;
+            }
+            if (cannonball.collides(allSprites, cannonballHit)) {
+                fly = false;
+            }
+            if (cannonball.collides(projectile)) {
+                cannonball.changeAni("ball");
+            }
+            if (fly) {
+                var cannonballAngle =
+                    (Math.atan(cannonball.vel.y / cannonball.vel.x) * 180) / Math.PI;
+                if (cannonballAngle == cannonballAngle) {
+                    cannonball.rotation = cannonballAngle;
+                }
             }
         }
-    }
 
-    if (fly || lastShot > 0) {
-        cannonIndicator.changeAni("reloading");
+        if (fly || lastShot > 0) {
+            cannonIndicator.changeAni("reloading");
+        } else {
+            cannonIndicator.changeAni("ready");
+        }
+
+        if (gamePause) {
+            if (!paused) {
+                newShade = new shade.Sprite(1000, 500);
+                paused = true;
+            }
+            world.timeScale = 0;
+        } else if (!gamePause) {
+            if (paused) {
+                newShade.remove();
+                paused = false;
+            }
+            world.timeScale = 1;
+        }
     } else {
-        cannonIndicator.changeAni("ready");
+        if (mouse.x >= 0 && mouse.x <= 2000 &&
+            mouse.y >= 0 && mouse.y <= 1000 &&
+            mouse.presses()) {
+            started = true;
+        }
     }
 
-    if (gamePause) {
-        if (!paused) {
-            newShade = new shade.Sprite(1000, 500);
-            paused = true;
-        }
-        world.timeScale = 0;
-    } else if (!gamePause) {
-        if (paused) {
-            newShade.remove();
-            paused = false;
-        }
-        world.timeScale = 1;
-    }
+
 
 }
 
