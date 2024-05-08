@@ -1,12 +1,12 @@
 let ground, cart, cannon, cannonball, projectile;
-let plank, concrete, target, normalTarget, goldTarget;
+let plank, stone, target, target1, target5;
 let shade, newShade, cannonIndicator, start, startText;
 var counter = 0;
 var score = 0;
 var lastShot = 0;
 var fly = false;
 var paused = false;
-var started = false;
+var started = true; //false
 
 function setup() {
     new Canvas(2000, 1000);
@@ -16,12 +16,14 @@ function setup() {
     cart = new Sprite();
     cart.w = 500;
     cart.h = 250;
-    cart.x = 150;
-    cart.y = 825;
     cart.collider = "static";
     cart.img = "imgs/cart.png";
     cart.scale = 0.4;
     cart.debug = true;
+    if (level == 1) {
+        cart.x = 300;
+        cart.y = 650;
+    }
 
     projectile = new Group();
     projectile.d = 40;
@@ -33,8 +35,8 @@ function setup() {
 
     cannon = new Sprite();
     cannon.d = 600;
-    cannon.x = 150;
-    cannon.y = 750;
+    cannon.x = cart.x;
+    cannon.y = cart.y - 75;
     cannon.collider = "none";
     cannon.rotation = -10;
     cannon.debug = true;
@@ -42,41 +44,52 @@ function setup() {
     cannon.scale = 0.3;
 
     target = new Group();
-    target.d = 50;
+    target.d = 100;
     target.name = "target";
 
-    normalTarget = new target.Group();
-    normalTarget.color = "red";
-    normalTarget.text = "1 point";
-    normalTarget.textColor = "white";
+    target1 = new target.Group();
+    target1.color = "red";
+    target1.text = "1 point";
+    target1.textColor = "white";
 
-    goldTarget = new target.Group();
-    goldTarget.color = "yellow";
-    goldTarget.text = "5 points";
-    goldTarget.textColor = "black";
+    target5 = new target.Group();
+    target5.color = "yellow";
+    target5.text = "5 points";
+    target5.textColor = "black";
 
     plank = new Group();
     plank.mass = 10;
     plank.name = "plank";
     plank.color = "#7F461B";
+    plankS = new plank.Group();
+    plankS.w = 20;
+    plankS.h = 200;
+    plankL = new plank.Group();
+    plankL.w = 20;
+    plankL.h = 400;
 
-    concrete = new Group();
-    concrete.mass = 30;
-    concrete.color = "#606060";
+    stone = new Group();
+    stone.w = 20;
+    stone.h = 200;
+    stone.mass = 30;
+    stone.name = "stone";
+    stone.color = "#606060";
 
-    ground = new Sprite();
+    if (level == 1) {
+        ground = new Sprite([[0, 800], [200, 700], [400, 700], [500, 800],
+        [700, 900], [900, 900], [1000, 850], [1100, 700],
+        [1200, 700], [1200, 650], [1400, 600], [1700, 600], [2000, 700]
+        ]);
+    }
     ground.collider = "static";
-    ground.w = 2000;
-    ground.h = 50;
-    ground.y = 900;
     ground.color = "darkgreen";
 
     //cannon indicator
     cannonIndicator = new Sprite();
     cannonIndicator.collider = "none";
     cannonIndicator.d = 0;
-    cannonIndicator.x = 200;
-    cannonIndicator.y = 900;
+    cannonIndicator.x = cart.x;
+    cannonIndicator.y = cart.y + 100;
     cannonIndicator.addAni("reloading", "imgs/reloading/reloading1.png", 4);
     cannonIndicator.addAni("ready", "imgs/ready.png");
     cannonIndicator.scale = 0.3;
@@ -90,25 +103,22 @@ function setup() {
     shade.opacity = 0.7;
 
     //build scene
-    new concrete.Sprite(800, 825, 20, 100);
-    new concrete.Sprite(900, 825, 20, 100);
-    new plank.Sprite(850, 765, 120, 20);
-    new plank.Sprite(800, 705, 20, 100);
-    new plank.Sprite(900, 705, 20, 100);
+    if (level == 1) {
+        new stone.Sprite(1110, 600);
+        new plankL.Sprite(1250, 530).rotation = 107;
+        new target5.Sprite(1170, 610);
 
-    new concrete.Sprite(1100, 825, 20, 100);
-    new concrete.Sprite(1200, 825, 20, 100);
-    new concrete.Sprite(1150, 765, 120, 20);
-    new plank.Sprite(1100, 705, 20, 100);
-    new plank.Sprite(1200, 705, 20, 100);
+        new plankS.Sprite(710, 800);
+        new plankS.Sprite(890, 800);
+        new stone.Sprite(800, 690).rotation = 90;
+        new target5.Sprite(800, 850);
+        new target1.Sprite(800, 630);
 
-    new plank.Sprite(1000, 645, 420, 20);
-
-    new normalTarget.Sprite(850, 875);
-    new goldTarget.Sprite(1150, 875);
-    new normalTarget.Sprite(850, 730);
-    new normalTarget.Sprite(1150, 730);
-    new goldTarget.Sprite(1000, 610);
+        new stone.Sprite(1490, 500);
+        new stone.Sprite(1690, 500);
+        new plankS.Sprite(1590, 390).rotation = 90;
+        new target1.Sprite(1590, 550);
+    }
 
     //start screen
     start = new Sprite();
@@ -158,7 +168,7 @@ function draw() {
             fly = true;
             lastShot = 30;
             counter++;
-            cannonball = new projectile.Sprite(150, 750);
+            cannonball = new projectile.Sprite(cannon.x, cannon.y);
             cannonball.changeAni("fireball");
             cannonball.visible = false;
             var angle = -cannon.rotation;
@@ -169,7 +179,7 @@ function draw() {
             cannonball.vel.x = xForce;
         }
         if (cannonball) {
-            if (round(dist(cannonball.x, cannonball.y, 150, 750)) >= 80) {
+            if (round(dist(cannonball.x, cannonball.y, cannon.x, cannon.y)) >= 100) {
                 cannonball.visible = true;
             }
             if (cannonball.collides(allSprites, cannonballHit)) {

@@ -1,5 +1,6 @@
 var ratio = window.devicePixelRatio;
 var gamePause = false;
+var level = 1;
 
 function changeRes() {
     var width = window.screen.availWidth;
