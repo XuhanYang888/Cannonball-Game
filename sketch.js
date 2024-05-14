@@ -6,7 +6,7 @@ var score = 0;
 var lastShot = 0;
 var fly = false;
 var paused = false;
-var started = true; //false
+var started = false;
 
 function setup() {
     new Canvas(2000, 1000);
@@ -19,10 +19,12 @@ function setup() {
     cart.collider = "static";
     cart.img = "imgs/cart.png";
     cart.scale = 0.4;
-    cart.debug = true;
     if (level == 1) {
         cart.x = 300;
         cart.y = 650;
+    } else if (level == 2) {
+        cart.x = 300;
+        cart.y = 750;
     }
 
     projectile = new Group();
@@ -31,7 +33,6 @@ function setup() {
     projectile.mass = 3;
     projectile.addAni("fireball", "imgs/fireball/fireball1.png", 4);
     projectile.addAni("ball", "imgs/ball.png");
-    projectile.debug = true;
 
     cannon = new Sprite();
     cannon.d = 600;
@@ -39,7 +40,6 @@ function setup() {
     cannon.y = cart.y - 75;
     cannon.collider = "none";
     cannon.rotation = -10;
-    cannon.debug = true;
     cannon.img = "imgs/cannon.png";
     cannon.scale = 0.3;
 
@@ -78,7 +78,13 @@ function setup() {
     if (level == 1) {
         ground = new Sprite([[0, 800], [200, 700], [400, 700], [500, 800],
         [700, 900], [900, 900], [1000, 850], [1100, 700],
-        [1200, 700], [1200, 650], [1400, 600], [1700, 600], [2000, 700]
+        [1200, 700], [1200, 650], [1400, 600], [1700, 600], [2000, 700], [2001, 700], [2001, 0]
+        ]);
+    } else if (level == 2) {
+        ground = new Sprite([[0, 700], [200, 800], [400, 800], [500, 850],
+        [700, 900], [900, 800], [1100, 600], [1200, 550], [1350, 550],
+        [1500, 650], [1600, 750], [1650, 800], [1900, 800],
+        [2000, 780], [2001, 780], [2001, 0]
         ]);
     }
     ground.collider = "static";
@@ -118,6 +124,26 @@ function setup() {
         new stone.Sprite(1690, 500);
         new plankS.Sprite(1590, 390).rotation = 90;
         new target1.Sprite(1590, 550);
+    } else if (level == 2) {
+        new stone.Sprite(1210, 450);
+        new stone.Sprite(1340, 450);
+        new plankS.Sprite(1275, 340).rotation = 90;
+        new target5.Sprite(1275, 500);
+
+        new plankS.Sprite(1190, 230);
+        new plankS.Sprite(1360, 230);
+        new plankS.Sprite(1275, 120).rotation = 90;
+        new target1.Sprite(1275, 280);
+
+        new plankS.Sprite(1710, 700);
+        new plankS.Sprite(1840, 700);
+        new plankS.Sprite(1775, 590).rotation = 90;
+        new target5.Sprite(1775, 750);
+
+        new plankS.Sprite(1690, 480);
+        new plankS.Sprite(1860, 480);
+        new plankS.Sprite(1775, 370).rotation = 90;
+        new target1.Sprite(1775, 530);
     }
 
     //start screen

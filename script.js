@@ -1,6 +1,9 @@
-var ratio = window.devicePixelRatio;
 var gamePause = false;
-var level = 1;
+var level = localStorage.getItem("lvl");
+if (!level) {
+    level = 1;
+    localStorage.setItem("lvl", 1);
+}
 
 function changeRes() {
     var width = window.screen.availWidth;
@@ -9,6 +12,11 @@ function changeRes() {
     canvas.style.width = String(width - 100) + "px";
     canvas.style.height = String((width - 100) / 2) + "px";
     title.focus();
+}
+
+function levelChange(newLevel) {
+    localStorage.setItem("lvl", newLevel);
+    window.location.reload();
 }
 
 function Pause() {
