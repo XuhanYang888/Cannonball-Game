@@ -1,4 +1,4 @@
-let ground, cart, cannon, cannonball, projectile;
+let ground, groundImg, cart, cannon, cannonball, projectile;
 let plank, stone, target, target1, target5;
 let shade, newShade, cannonIndicator, start, startText;
 var counter = 0;
@@ -10,8 +10,7 @@ var started = false;
 
 function setup() {
     new Canvas(2000, 1000);
-    world.gravity.y = 9.80665;
-    p5play.renderStats = true;
+    world.gravity.y = 9.8;
 
     cart = new Sprite();
     cart.w = 500;
@@ -48,9 +47,7 @@ function setup() {
     target.name = "target";
 
     target1 = new target.Group();
-    target1.color = "red";
-    target1.text = "1 point";
-    target1.textColor = "white";
+    target1.addAni("imgs/target1/target1-1.png", 4);
 
     target5 = new target.Group();
     target5.color = "yellow";
@@ -60,32 +57,38 @@ function setup() {
     plank = new Group();
     plank.mass = 10;
     plank.name = "plank";
-    plank.color = "#7F461B";
     plankS = new plank.Group();
     plankS.w = 20;
     plankS.h = 200;
+    plankS.img = "imgs/plankS.png";
     plankL = new plank.Group();
     plankL.w = 20;
     plankL.h = 400;
+    plankL.img = "imgs/plankL.png";
 
     stone = new Group();
     stone.w = 20;
     stone.h = 200;
     stone.mass = 30;
     stone.name = "stone";
-    stone.color = "#606060";
+    stone.img = "imgs/stone.png";
 
+
+    groundImg = new Sprite();
+    groundImg.collider = "n";
     if (level == 1) {
         ground = new Sprite([[0, 800], [200, 700], [400, 700], [500, 800],
         [700, 900], [900, 900], [1000, 850], [1100, 700],
         [1200, 700], [1200, 650], [1400, 600], [1700, 600], [2000, 700], [2001, 700], [2001, 0]
         ]);
+        groundImg.img = "imgs/lvl1.png";
     } else if (level == 2) {
         ground = new Sprite([[0, 700], [200, 800], [400, 800], [500, 850],
         [700, 900], [900, 800], [1100, 600], [1200, 550], [1350, 550],
         [1500, 650], [1600, 750], [1650, 800], [1900, 800],
         [2000, 780], [2001, 780], [2001, 0]
         ]);
+        groundImg.img = "imgs/lvl2.png";
     }
     ground.collider = "static";
     ground.color = "darkgreen";
