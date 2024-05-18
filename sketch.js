@@ -47,12 +47,10 @@ function setup() {
     target.name = "target";
 
     target1 = new target.Group();
-    target1.addAni("imgs/target1/target1-1.png", 4);
+    target1.addAni("imgs/target1/target1-1.png", 8);
 
     target5 = new target.Group();
-    target5.color = "yellow";
-    target5.text = "5 points";
-    target5.textColor = "black";
+    target5.addAni("imgs/target5/target5-1.png", 6);
 
     plank = new Group();
     plank.mass = 10;
