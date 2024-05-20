@@ -1,12 +1,10 @@
 let ground, groundImg, cart, cannon, cannonball, projectile;
 let plank, stone, target, target1, target5;
-let shade, newShade, cannonIndicator, start, startText;
-var counter = 0;
+let shade, newShade, cannonIndicator;
 var score = 0;
 var lastShot = 0;
 var fly = false;
 var paused = false;
-var started = false;
 
 function setup() {
     new Canvas(2000, 1000);
@@ -45,7 +43,6 @@ function setup() {
 
     target = new Group();
     target.d = 100;
-    target.name = "target";
 
     target1 = new target.Group();
     target1.name = "target1";
@@ -149,123 +146,100 @@ function setup() {
         new plankS.Sprite(1775, 370).rotation = 90;
         new target1.Sprite(1775, 530);
     }
-
-    //start screen
-    start = new Sprite();
-    start.w = 2000;
-    start.h = 1000;
-    start.x = 1000;
-    start.y = 500;
-    start.collider = "none";
-    start.color = "black";
-
-    startText = new Sprite();
-    startText.x = 1000;
-    startText.y = 300;
-    startText.collider = "none";
-    startText.addAni("start", "imgs/start/start1.png", 6);
-    startText.scale = 0.3;
 }
 
 function draw() {
     //clear();
     background(207, 235, 253, 120);
 
-    if (started) {
-        start.remove();
-        startText.remove();
-
-        cart.text = String(counter) + " " + String(score);
-
-        if (kb.pressing("down")) {
-            cannon.rotationSpeed = 2;
-        } else if (kb.pressing("up")) {
-            cannon.rotationSpeed = -2;
-        } else {
-            cannon.rotationSpeed = 0;
-        }
-
-        if (cannon.rotation > -10) {
-            cannon.rotationSpeed = 0;
-            cannon.rotation -= 2;
-        } else if (cannon.rotation < -60) {
-            cannon.rotationSpeed = 0;
-            cannon.rotation += 2;
-        }
-
-        lastShot--;
-        if (kb.pressed(" ") && lastShot < 1 && counter < 10 && !fly) {
-            fly = true;
-            lastShot = 30;
-            counter++;
-            cannonball = new projectile.Sprite(cannon.x, cannon.y);
-            cannonball.changeAni("fireball");
-            cannonball.visible = false;
-            var angle = -cannon.rotation;
-            var totalForce = 15;
-            var yForce = totalForce * Math.sin(angle * Math.PI / 180);
-            var xForce = totalForce * Math.cos(angle * Math.PI / 180);
-            cannonball.vel.y = -yForce;
-            cannonball.vel.x = xForce;
-        }
-        if (cannonball) {
-            if (round(dist(cannonball.x, cannonball.y, cannon.x, cannon.y)) >= 100) {
-                cannonball.visible = true;
-            }
-            if (cannonball.collides(allSprites, cannonballHit)) {
-                fly = false;
-            }
-            if (cannonball.collides(projectile)) {
-                cannonball.changeAni("ball");
-            }
-            if (fly) {
-                var cannonballAngle =
-                    (Math.atan(cannonball.vel.y / cannonball.vel.x) * 180) / Math.PI;
-                if (cannonballAngle == cannonballAngle) {
-                    cannonball.rotation = cannonballAngle;
-                }
-            }
-        }
-
-        if (fly || lastShot > 0) {
-            cannonIndicator.changeAni("reloading");
-        } else {
-            cannonIndicator.changeAni("ready");
-        }
-
-        if (gamePause) {
-            if (!paused) {
-                newShade = new shade.Sprite(1000, 500);
-                paused = true;
-            }
-            world.timeScale = 0;
-        } else if (!gamePause) {
-            if (paused) {
-                newShade.remove();
-                paused = false;
-            }
-            world.timeScale = 1;
-        }
+    if (kb.pressing("down")) {
+        cannon.rotationSpeed = 2;
+    } else if (kb.pressing("up")) {
+        cannon.rotationSpeed = -2;
     } else {
-        if (mouse.x >= 0 && mouse.x <= 2000 &&
-            mouse.y >= 0 && mouse.y <= 1000 &&
-            mouse.presses()) {
-            started = true;
+        cannon.rotationSpeed = 0;
+    }
+
+    if (cannon.rotation > -10) {
+        cannon.rotationSpeed = 0;
+        cannon.rotation -= 2;
+    } else if (cannon.rotation < -60) {
+        cannon.rotationSpeed = 0;
+        cannon.rotation += 2;
+    }
+
+    lastShot--;
+    if (kb.pressed(" ") && lastShot < 1 && !fly) {
+        fly = true;
+        lastShot = 30;
+        cannonball = new projectile.Sprite(cannon.x, cannon.y);
+        cannonball.changeAni("fireball");
+        cannonball.visible = false;
+        var angle = -cannon.rotation;
+        var totalForce = 15;
+        var yForce = totalForce * Math.sin(angle * Math.PI / 180);
+        var xForce = totalForce * Math.cos(angle * Math.PI / 180);
+        cannonball.vel.y = -yForce;
+        cannonball.vel.x = xForce;
+    }
+    if (cannonball) {
+        if (round(dist(cannonball.x, cannonball.y, cannon.x, cannon.y)) >= 100) {
+            cannonball.visible = true;
+        }
+        if (cannonball.collides(allSprites, cannonballHit)) {
+            fly = false;
+        }
+        if (cannonball.collides(projectile)) {
+            cannonball.changeAni("ball");
+        }
+        if (fly) {
+            var cannonballAngle =
+                (Math.atan(cannonball.vel.y / cannonball.vel.x) * 180) / Math.PI;
+            if (cannonballAngle == cannonballAngle) {
+                cannonball.rotation = cannonballAngle;
+            }
         }
     }
 
+    if (fly || lastShot > 0) {
+        cannonIndicator.changeAni("reloading");
+    } else {
+        cannonIndicator.changeAni("ready");
+    }
 
-
+    if (gamePause) {
+        if (!paused) {
+            newShade = new shade.Sprite(1000, 500);
+            paused = true;
+        }
+        world.timeScale = 0;
+    } else if (!gamePause) {
+        if (paused) {
+            newShade.remove();
+            paused = false;
+        }
+        world.timeScale = 1;
+    }
 }
 
 
 function cannonballHit(cannonball, obj) {
     cannonball.changeAni("ball");
-    if (obj.name == "target") {
+    if (obj.name == "target1" || obj.name == "target5") {
         if (obj.name == "target1") {
             score++;
         } else {
             score += 5;
+        }
+        if (score == 12) {
+            document.getElementById("scoreImg").src = "imgs/score/score-3.png";
+            showToast();
+        } else if (score >= 10 || score == 7) {
+            document.getElementById("scoreImg").src = "imgs/score/score-2.png";
+        } else if (score >= 5 || score == 2) {
+            document.getElementById("scoreImg").src = "imgs/score/score-1.png";
+        } else {
+            document.getElementById("scoreImg").src = "imgs/score/score-0.png";
         }
         obj.remove();
     } else if (obj.name == "plank") {

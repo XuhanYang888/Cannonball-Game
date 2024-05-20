@@ -15,6 +15,7 @@ function changeRes() {
     var margin = (width - roundedWidth) / 2;
     body.style.marginLeft = String(margin) + "px";
     body.style.marginRight = String(margin) + "px";
+    document.getElementById("levelIndicator").innerHTML = "Level: " + String(level);
 }
 
 function levelChange(newLevel) {
@@ -33,3 +34,7 @@ function Pause() {
 window.addEventListener("click", Pause);
 
 
+function showToast() {
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+}
