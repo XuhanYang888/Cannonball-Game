@@ -8,10 +8,13 @@ if (!level) {
 function changeRes() {
     var width = window.screen.availWidth;
     const canvas = document.getElementById("defaultCanvas0");
-    const title = document.getElementById("title");
-    canvas.style.width = String(width - 100) + "px";
-    canvas.style.height = String((width - 100) / 2) + "px";
-    title.focus();
+    const body = document.getElementById("body");
+    var roundedWidth = width * 0.85;
+    canvas.style.width = String(roundedWidth) + "px";
+    canvas.style.height = String(roundedWidth / 2) + "px";
+    var margin = (width - roundedWidth) / 2;
+    body.style.marginLeft = String(margin) + "px";
+    body.style.marginRight = String(margin) + "px";
 }
 
 function levelChange(newLevel) {

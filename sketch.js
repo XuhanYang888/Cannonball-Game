@@ -10,6 +10,7 @@ var started = false;
 
 function setup() {
     new Canvas(2000, 1000);
+    frameRate(60);
     world.gravity.y = 9.8;
 
     cart = new Sprite();
@@ -47,10 +48,12 @@ function setup() {
     target.name = "target";
 
     target1 = new target.Group();
+    target1.name = "target1";
     target1.addAni("imgs/target1/target1-1.png", 8);
 
     target5 = new target.Group();
-    target5.addAni("imgs/target5/target5-1.png", 6);
+    target5.name = "target5";
+    target5.addAni("imgs/target5/target5-1.png", 8);
 
     plank = new Group();
     plank.mass = 10;
@@ -259,7 +262,7 @@ function draw() {
 function cannonballHit(cannonball, obj) {
     cannonball.changeAni("ball");
     if (obj.name == "target") {
-        if (obj.color == "rgba(255,0,0,1)") {
+        if (obj.name == "target1") {
             score++;
         } else {
             score += 5;
