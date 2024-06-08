@@ -107,7 +107,7 @@ function setup() {
     shade.h = 1000;
     shade.collider = "none";
     shade.img = "imgs/pause.png";
-    shade.opacity = 0.7;
+    shade.opacity = 1;
 
     //build scene
     if (level == 1) {
